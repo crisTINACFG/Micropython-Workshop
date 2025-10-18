@@ -1,12 +1,28 @@
 # Diagnostic: print raw button value frequently
+import machine
 from machine import Pin
-from time import sleep
+import utime
 
 BUTTON_PIN = 16
-# Try PULL_DOWN first (button should connect to 3.3V when pressed)
-button = Pin(BUTTON_PIN, Pin.IN, Pin.PULL_UP)
+# Change PULL_DOWN <-> PULL_UP to match how your button is wired.
+# If button connects to 3.3V when pressed -> use Pin.PULL_DOWN
+# If button connects to GND when pressed  -> use Pin.PULL_UP
+button = Pin(BUTTON_PIN, Pin.IN, Pin.PULL_DOWN)
 
-print("Raw monitor: button pressed should show 1 when you press the button.")
+# give pin a moment to settle, then read idle level
+utime.sleep_ms(50)
+idle = button.value()
+print("Detected idle value:", idle)
+print("Will print once per press (debounced).")
+
 while True:
-    print(button.value())
-    sleep(0.2)
+    val = button.value()
+    if val != idle:
+        # debounce
+        utime.sleep_ms(20)
+        if button.value() != idle:
+            print("Button pressed")
+            # wait for release
+            while button.value() != idle:
+                utime.sleep_ms(20)
+    utime.sleep_ms(50)
