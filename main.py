@@ -1,42 +1,43 @@
-from machine import Pin
-from utime import sleep
+from machine import Pin, PWM
+from time import sleep
 
-# === DEFINE PINS ===
-RED_PIN = 18    # Change to your Red GPIO
-GREEN_PIN = 19  # Change to your Green GPIO
-BLUE_PIN = 20   # Change to your Blue GPIO
+# === Define pin for RED ===
+RED_PIN = 13
 
-# === DEFINE LED TYPE ===
-COMMON_CATHODE = True  # True if common cathode, False if common anode
+# === Constants ===
+BRIGHTNESS = 0.5           # 0.0–1.0 (50%)
+MAX_COLOUR_VALUE = 255
+COMMON_ANODE = True         # Your LED is common anode
 
-# === SETUP PINS ===
-red = Pin(RED_PIN, Pin.OUT)
-green = Pin(GREEN_PIN, Pin.OUT)
-blue = Pin(BLUE_PIN, Pin.OUT)
+# === Setup PWM ===
+red = PWM(Pin(RED_PIN))
+red.freq(1000)
 
-# === COLOR CONTROL FUNCTION ===
-def set_color(r, g, b):
-    """Turn on/off each color (1=on, 0=off)"""
-    if COMMON_CATHODE:
-        red.value(r)
-        green.value(g)
-        blue.value(b)
-    else:  # Common anode
-        red.value(not r)
-        green.value(not g)
-        blue.value(not b)
+def show_red(value):
+    """Set brightness of red LED (0–255)"""
+    # Scale 0–255 to 0–65535
+    r_val = int(value * 65535 / MAX_COLOUR_VALUE * BRIGHTNESS)
+    
+    if COMMON_ANODE:
+        # invert: low = on
+        r_val = 65535 - r_val
+    
+    red.duty_u16(r_val)
 
-# === SIMPLE LOOP TO TEST COLORS ===
+# === Test sequence ===
 while True:
-    set_color(1, 0, 0)  # Red
-    print("Red")
+    print("Red full brightness")
+    show_red(255)
     sleep(1)
-    set_color(0, 1, 0)  # Green
-    print("Green")
+
+    print("Half brightness")
+    show_red(128)
     sleep(1)
-    set_color(0, 0, 1)  # Blue
-    print("Blue")
+
+    print("Dim")
+    show_red(50)
     sleep(1)
-    set_color(1, 1, 1)  # White
-    print("White")
+
+    print("Off")
+    show_red(0)
     sleep(1)
