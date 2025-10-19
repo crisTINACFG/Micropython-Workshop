@@ -1,20 +1,10 @@
-# import machine
-# import utime
-
-# buzzer = machine.Pin(15, machine.Pin.OUT)
-
-# buzzer.value(1)
-# utime.sleep(0.1)
-# buzzer.value(0)
-
-
 import machine
 import utime
 
 # PWM buzzer on Pin 15
 BUZZER_PIN = 15
 pwm = machine.PWM(machine.Pin(BUZZER_PIN))
-DEFAULT_DUTY = 32768  # ~50% duty (0-65535)
+DEFAULT_DUTY = 32768
 
 # Note frequencies (Hz)
 C4 = 261
@@ -35,11 +25,11 @@ def play_tone(freq, ms):
     pwm.duty_u16(DEFAULT_DUTY)
     utime.sleep_ms(ms)
     pwm.duty_u16(0)
-    # short gap between notes
     utime.sleep_ms(30)
 
 def play_song():
     # "Twinkle Twinkle Little Star" (short)
+    # (c4, 400) means play C4 for 400 ms
     melody = [
         (C4, 400), (C4, 400), (G4, 400), (G4, 400),
         (A4, 400), (A4, 400), (G4, 800),
