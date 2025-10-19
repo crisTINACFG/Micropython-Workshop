@@ -43,11 +43,11 @@ def play_tone(freq, ms):
         utime.sleep_ms(ms)
         return
     pwm.freq(int(freq))
-    #HINT: Turn on LED when playing a note here (show_red(255)), choose any brightness you like
+    #HINT: Turn on LED when playing a note here, choose any brightness you like
     pwm.duty_u16(DEFAULT_DUTY)
     utime.sleep_ms(ms)
     pwm.duty_u16(0)
-    #HINT: Turn off LED after the note here (show_red(0))
+    #HINT: Turn off LED after the note here
     utime.sleep_ms(30)
 
 def play_song():
