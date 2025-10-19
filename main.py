@@ -1,28 +1,28 @@
 from machine import Pin, PWM
 from time import sleep
 
-# === Define pin for RED ===
-RED_PIN = 13
+# === Define GPIO pin for RED ===
+RED_PIN = 16
 
 # === Constants ===
-BRIGHTNESS = 0.5           # 0.0–1.0 (50%)
+BRIGHTNESS = 1   
 MAX_COLOUR_VALUE = 255
 
 # === Setup PWM ===
 red = PWM(Pin(RED_PIN))
 red.freq(1000)
+ACTIVE_LOW = False
 
 def show_red(value):
-    """Set brightness of red LED (0–255)"""
-    # Scale 0–255 to 0–65535
     r_val = int(value * 65535 / MAX_COLOUR_VALUE * BRIGHTNESS)
-
-    r_val = 65535 - r_val
-
+    if ACTIVE_LOW:
+        r_val = 65535 - r_val
     red.duty_u16(r_val)
 
 # === Turning the LED on ===
 while True:
+    show_red(0)
+
     print("Red full brightness")
     show_red(255)
     sleep(1)
